@@ -14,6 +14,18 @@ public class SearchPage extends BasePage{
     @FindBy(xpath = "//*[@resource-id='com.telran.ilcarro:id/title']")
     MobileElement buttonLogin;
 
+    @FindBy(xpath = "//*[@resource-id='com.telran.ilcarro:id/editLocation']")
+    MobileElement fieldLocation;
+    @FindBy(xpath = "//*[@resource-id='com.telran.ilcarro:id/editFrom']")
+    MobileElement fieldFrom;
+
+    @FindBy(xpath = "//*[@resource-id='com.telran.ilcarro:id/editTo']")
+    MobileElement fieldTo;
+
+    @FindBy(xpath = "//android.widget.ListView/android.widget.LinearLayout[2]" +
+            "/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.TextView")
+    MobileElement buttonLogout;
+
     public SearchPage clickDots(){
         click(dots);
         return this;
@@ -24,4 +36,13 @@ public class SearchPage extends BasePage{
         return new LoginPage(driver);
     }
 
+    public boolean isElementVisible_Location(){
+        return isElementVisible(fieldLocation, 5);
+    }
+
+    public SearchPage logout() {
+        System.out.println("-->"+buttonLogout.getText());
+        click(buttonLogout);
+        return this;
+    }
 }

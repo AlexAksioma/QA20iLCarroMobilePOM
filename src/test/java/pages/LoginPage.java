@@ -18,11 +18,18 @@ public class LoginPage extends BasePage{
     @FindBy(xpath = "//*[@resource-id='com.telran.ilcarro:id/loginBtn']")
     MobileElement buttonYalla;
 
+    @FindBy(xpath = "//*[@resource-id='android:id/message']")
+    MobileElement errorMessage_login_password_incorrect;
+
+    @FindBy(xpath = "//*[@resource-id='android:id/button1']")
+    MobileElement buttonOkErrorMessage;
+
     public LoginPage typeEmailPassword(UserDto user){
         type(fieldEmail, user.getEmail());
         type(fieldPassword, user.getPassword());
         return this;
     }
+
 
     public SearchPage clickYallaPositive(){
         click(buttonYalla);
@@ -32,5 +39,20 @@ public class LoginPage extends BasePage{
         Actions actions = new Actions(driver);
         actions.moveToElement(buttonYalla,0,-10).click().perform();
         return new SearchPage(driver);
+    }
+
+    public LoginPage clickYallaNegativeActions() {
+        Actions actions = new Actions(driver);
+        actions.moveToElement(buttonYalla,0,-10).click().perform();
+        return this;
+    }
+
+    public boolean validateErrorMessage() {
+        return textInElementPresent(errorMessage_login_password_incorrect,"Login or Password incorrect",5);
+    }
+
+    public LoginPage clickButtonOkErrorMessage(){
+        click(buttonOkErrorMessage);
+        return this;
     }
 }
