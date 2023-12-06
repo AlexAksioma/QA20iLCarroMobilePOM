@@ -51,8 +51,11 @@ public class LoginPage extends BasePage{
         return textInElementPresent(errorMessage_login_password_incorrect,"Login or Password incorrect",5);
     }
 
+
     public LoginPage clickButtonOkErrorMessage(){
         click(buttonOkErrorMessage);
         return this;
     }
+
+
 }
