@@ -30,6 +30,10 @@ public class SearchPage extends BasePage{
     @FindBy(xpath = "//android.widget.ListView/android.widget.LinearLayout[2]/" +
             "android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.TextView")
     MobileElement buttonRegistration;
+    @FindBy(xpath = "//*[@resource-id='com.telran.ilcarro:id/searchBtn']")
+    MobileElement buttonYalla;
+    @FindBy(xpath = "//*[@resource-id='android:id/message']")
+    MobileElement errorMessage_To_date_cant_be_before_from_date;
     //=========== calendar
     @FindBy(xpath = "//*[@resource-id='android:id/prev']")
     MobileElement calendarMonthPrev;
@@ -67,21 +71,24 @@ public class SearchPage extends BasePage{
         return new RegistrationPage(driver);
     }
     //==================================== calendar
-    public SearchPage typeFindCarForm(String city, String dateFrom, String DateTo){
+    public SearchPage typeFindCarForm(String city, String dateFrom, String dateTo){
        type(fieldLocation, city);
        click(fieldFrom);
        typeCalendar(dateFrom);
-
-
-
-
+       clickButtonBack();
+       click(fieldTo);
+       typeCalendar(dateTo);
+       pause(3);
+       clickButtonBack();
        return this;
     }
 
-    private SearchPage typeCalendar(String date) { //21/11/2023
+    //    01/03/2024       2024-2023 -1 + month  click MonthNext
+    private SearchPage typeCalendar(String date) { //21/11/2023   //android.view.View[@content-desc="15 December 2023"]
         int quantityMonth=0;
         Month monthEnum = LocalDate.parse(date,DateTimeFormatter.ofPattern("dd/MM/yyyy")).getMonth();
         System.out.println("month enum -->"+monthEnum.name());
+        System.out.println(monthEnum.name().charAt(0)+monthEnum.name().substring(1).toLowerCase());
         LocalDate dateNow = LocalDate.now();
         int dayNow = dateNow.getDayOfMonth();
         int monthNow = dateNow.getMonthValue();
@@ -104,18 +111,37 @@ public class SearchPage extends BasePage{
                     click(calendarMonthNext);
                 }
             }
+        }else if(year > yearNow){
+            quantityMonth = (year - yearNow - 1)*12 + month;
+            for (int i=0; i<quantityMonth; i++){
+                click(calendarMonthNext);
+            }
+        }else {
+            quantityMonth = (yearNow - year)*12+12 - month;   // 20/11/2022       10.12.2023   (2023-2022)*12 + (12-11)
+            for (int i=0; i<quantityMonth; i++){
+                click(calendarMonthPrev);
+            }
         }
-
+        String monthFromDateEnum = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy")).getMonth().name();
+        //System.out.println(dateArr[0]+" "+monthFromDateEnum.charAt(0)+monthFromDateEnum.substring(1).toLowerCase());
         String calendarDate = String.format
-                ("//android.view.View[@content-desc='%s December 2023']", dateArr[0]);
+                ("//android.view.View[@content-desc='%s']",
+                        (dateArr[0]+" "+monthFromDateEnum.charAt(0)+monthFromDateEnum.substring(1).toLowerCase()+" "+dateArr[2]));
         System.out.println("--> "+calendarDate);
         MobileElement elementDateClick = driver.findElement(By.xpath(calendarDate));
         click(elementDateClick);
-
-
-
-
         click(calendarButtonOk);
         return this;
+    }
+    public SearchResultPage clickButtonYallaPositive(){
+        click(buttonYalla);
+        return new SearchResultPage(driver);
+    }
+    public SearchPage clickButtonYallaNegative(){
+        click(buttonYalla);
+        return this;
+    }
+    public boolean validateErrorMessage(){
+        return textInElementPresent(errorMessage_To_date_cant_be_before_from_date,"To date can't be before from date",5);
     }
 }
